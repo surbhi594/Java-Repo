@@ -1,0 +1,88 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class Library {
+
+	public static void main(String[] args) throws SQLException, ClassNotFoundException {
+		Scanner sc = new Scanner(System.in);
+
+		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/STUDENT ?useSSL=false", "root",
+				"");
+
+		try {
+
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Statement st = con.createStatement();
+
+			int del = st.executeUpdate("DELETE from library;");
+
+			System.out.println("===================Insertion=================");
+			int insert = st.executeUpdate("INSERT into library (bID, Title, Author, Price) "
+					+ "values (101, 'Mathematics', '  RD Sharma ', 350), " + "(102, 'Physics', '      HC Verma  ', 500),  "
+					+ "(103, 'Chemistry', '    S.Chand   ', 200), " + "(104, 'Invisible Man', 'HG Wells  ', 100);");
+
+			System.out.println();
+			ResultSet rs = st.executeQuery("SELECT * from library");
+			while (rs.next()) {
+				System.out.println(rs.getInt(1) + "       " + rs.getString(2) + "      " + rs.getString(3) + "      " + rs.getInt(4));
+			}
+
+			System.out.println("\n===================Deletion=================");
+			System.out.print("\nEnter the book ID to be deleted : ");
+			int id = sc.nextInt();
+
+			int del = st.executeUpdate("DELETE from library where bID = " + id);
+
+			System.out.println();
+			ResultSet rs1 = st.executeQuery("select * from library");
+			while (rs1.next()) {
+				System.out
+						.println(rs1.getInt(1) + "       " + rs1.getString(2) + "      " + rs1.getString(3) + "      " + rs1.getInt(4));
+			}
+
+			System.out.println("\n=========================Updating=========================");
+			System.out.print("\nEnter the book ID whose price is to be updated : ");
+			int ID = sc.nextInt();
+
+			System.out.print("New Price : ");
+			int price = sc.nextInt();
+
+			int pr = st.executeUpdate("UPDATE library SET Price = " + price + " where bID = " + ID);
+
+			System.out.println();
+			ResultSet rs2 = st.executeQuery("select * from library");
+			while (rs2.next()) {
+				System.out
+						.println(rs2.getInt(1) + "       " + rs2.getString(2) + "      " + rs2.getString(3) + "      " + rs2.getInt(4));
+			}
+
+			System.out.println("\n====================Searching=========================");
+			System.out.print("\nEnter the book name you want to search : ");
+			String b = sc.next();
+
+			System.out.println();
+			ResultSet rs3 = st.executeQuery("select * from library where Title Like '%" + b + "%';");
+			while (rs3.next()) {
+				System.out
+						.println(rs3.getInt(1) + "       " + rs3.getString(2) + "      " + rs3.getString(3) + "      " + rs3.getInt(4));
+			}
+
+		}
+
+		catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
+		finally {
+
+			con.close();
+
+		}
+      sc.close();
+	}
+}
